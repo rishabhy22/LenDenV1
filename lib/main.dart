@@ -1,3 +1,6 @@
+import 'dart:ui' as prefix0;
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 
@@ -32,12 +35,16 @@ class RandomWordsState extends State<RandomWords> {
       children: <Widget>[
         Positioned.fill(
           child: Container(
-            child: Align(child: Text(wordPair.asPascalCase),alignment: Alignment.topCenter,),
+            child: Align(
+              child: Text(wordPair.asPascalCase),
+              alignment: Alignment.topCenter,
+            ),
             color: widget.color,
           ),
         ),
         Align(
           child: RaisedButton(
+            splashColor: Colors.teal,
               child: Icon(Icons.ac_unit, color: widget.color),
               onPressed: () {
                 setState(() {});
@@ -49,12 +56,39 @@ class RandomWordsState extends State<RandomWords> {
   }
 }
 
-class MyApp extends StatefulWidget {
+class Column1 extends StatelessWidget {
+  final Color color;
+  Column1({this.color});
   @override
-  _MyAppState createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return Stack(children: <Widget>[
+      Positioned.fill(
+          child: Container(
+        color: Colors.red,
+        child: Image.asset(
+          'assets/Images/crop.jpg',
+          height: 300,
+          width: 1000,
+          fit: BoxFit.cover,
+          alignment: Alignment.topCenter,
+          colorBlendMode: prefix0.BlendMode.hardLight,
+        ),
+        alignment: Alignment.topCenter,
+      ))
+    ]);
+  }
 }
 
-void main() => runApp(MyApp());
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() {
+    return _MyAppState();
+  }
+}
+
+void main() {
+  return runApp(MyApp());
+}
 
 class _MyAppState extends State<MyApp> {
   @override
@@ -62,48 +96,53 @@ class _MyAppState extends State<MyApp> {
     //final wordPair = WordPair.random();
     return MaterialApp(
       title: 'My App',
-      color: Color(0xffd3e322),
+      color: Colors.black,
       home: Scaffold(
         appBar: AppBar(
-          title: Text('App'),
+          title: Text('Owl App'),
           backgroundColor: Colors.red,
         ),
         body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Flexible(
-                flex: 3,
+            children: <Widget>[
+              Expanded(
+                flex: 2,
+                child: Column1(
+                  color: Colors.orange,
+                ),
+              ),
+              Expanded(
                 child: RandomWords(
                   color: Colors.orange,
                 ),
               ),
-              Flexible(
+              Expanded(
                 child: RandomWords(
-                  color: Colors.blue,
+                  color: Colors.deepPurple,
                 ),
               ),
-              Flexible(
-                child: RandomWords(
-                  color: Colors.green,
-                ),
-              ),
-              Flexible(
-                  flex: 2,
-                  child: RandomWords(
-                    color: Colors.deepPurple,
-                  ))
+              Expanded(
+                child: Stack(children: <Widget>[
+                  RandomWords(
+                          color: Colors.green,
+                        ),
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: FloatingActionButton(
+                          child: Icon(
+                            Icons.ac_unit,
+                            color: Colors.black,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            setState(() {});
+                          }),
+                  ),
+
+                ]),
+              )
             ]),
-        bottomNavigationBar: FloatingActionButton(
-          child: Icon(
-            Icons.view_headline,
-            color: Color(0xffd3e322),
-            size: 30,
-          ),
-          onPressed: () {
-            setState(() {});
-          },
-        ),
       ),
     );
   }
