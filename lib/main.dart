@@ -96,7 +96,6 @@ class _MyAppState extends State<MyApp> {
     //final wordPair = WordPair.random();
     return MaterialApp(
       title: 'My App',
-      color: Colors.black,
       home: Scaffold(
         appBar: AppBar(
           title: Text('Owl App'),
