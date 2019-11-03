@@ -49,7 +49,7 @@ class RandomWordsState extends State<RandomWords> {
               onPressed: () {
                 setState(() {});
               }),
-          alignment: Alignment.bottomLeft,
+          alignment: Alignment.bottomRight,
         )
       ],
     );
