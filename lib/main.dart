@@ -20,7 +20,9 @@ class MyClipper extends CustomClipper<Path> {
 
 class RandomWords extends StatefulWidget {
   final Color color;
+
   RandomWords({this.color});
+
   @override
   RandomWordsState createState() {
     return RandomWordsState();
@@ -31,51 +33,49 @@ class RandomWordsState extends State<RandomWords> {
   @override
   Widget build(BuildContext context) {
     final wordPair = WordPair.random();
-    return Stack(
-      children: <Widget>[
-        Positioned.fill(
-          child: Container(
-            child: Align(
-              child: Text(wordPair.asPascalCase),
-              alignment: Alignment.topCenter,
-            ),
-            color: widget.color,
+    return RaisedButton(
+      color: widget.color,
+      splashColor: Colors.teal,
+      child: Container(
+        child: Align(
+          child: Text(
+            wordPair.asPascalCase,
+            style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w900,
+                color: Colors.black38),
           ),
+          alignment: Alignment.center,
         ),
-        Align(
-          child: RaisedButton(
-            splashColor: Colors.teal,
-              child: Icon(Icons.ac_unit, color: widget.color),
-              onPressed: () {
-                setState(() {});
-              }),
-          alignment: Alignment.bottomRight,
-        )
-      ],
+      ),
+      onPressed: () {
+        setState(() {});
+      },
     );
   }
+
+  RandomWordsState();
 }
 
 class Column1 extends StatelessWidget {
   final Color color;
+
   Column1({this.color});
+
   @override
   Widget build(BuildContext context) {
-    return Stack(children: <Widget>[
-      Positioned.fill(
-          child: Container(
-        color: Colors.red,
-        child: Image.asset(
-          'assets/Images/crop.jpg',
-          height: 300,
-          width: 1000,
-          fit: BoxFit.cover,
-          alignment: Alignment.topCenter,
-          colorBlendMode: prefix0.BlendMode.hardLight,
-        ),
+    return Container(
+      color: Colors.red,
+      child: Image.asset(
+        'assets/Images/crop.jpg',
+        height: 300,
+        width: 1000,
+        fit: BoxFit.cover,
         alignment: Alignment.topCenter,
-      ))
-    ]);
+        colorBlendMode: prefix0.BlendMode.hardLight,
+      ),
+      alignment: Alignment.topCenter,
+    );
   }
 }
 
@@ -102,13 +102,28 @@ class _MyAppState extends State<MyApp> {
           backgroundColor: Colors.red,
         ),
         body: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            //    mainAxisAlignment: MainAxisAlignment.center,
+            //   crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Expanded(
+              Flexible(
                 flex: 2,
-                child: Column1(
-                  color: Colors.orange,
+                child: Stack(
+                  children: <Widget>[
+                    Column1(
+                      color: Colors.orange,
+                    ),
+                    Align(
+                      child: FloatingActionButton(
+                        splashColor: Colors.black,
+                        child: Icon(
+                          Icons.settings,
+                          size: 30,
+                        ),
+                        onPressed: () {},
+                      ),
+                      alignment: Alignment(0.85, 0.8),
+                    )
+                  ],
                 ),
               ),
               Expanded(
@@ -123,22 +138,24 @@ class _MyAppState extends State<MyApp> {
               ),
               Expanded(
                 child: Stack(children: <Widget>[
-                  RandomWords(
-                          color: Colors.green,
-                        ),
+                  Positioned.fill(
+                    child: RandomWords(
+                      color: Colors.green,
+                    ),
+                  ),
                   Align(
                     alignment: Alignment.bottomLeft,
                     child: FloatingActionButton(
-                          child: Icon(
-                            Icons.ac_unit,
-                            color: Colors.black,
-                            size: 30,
-                          ),
-                          onPressed: () {
-                            setState(() {});
-                          }),
+                        splashColor: Colors.black,
+                        child: Icon(
+                          Icons.ac_unit,
+                          color: Colors.black,
+                          size: 30,
+                        ),
+                        onPressed: () {
+                          setState(() {});
+                        }),
                   ),
-
                 ]),
               )
             ]),
