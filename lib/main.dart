@@ -1,165 +1,163 @@
-import 'dart:ui' as prefix0;
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:english_words/english_words.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_hello_world/accountpage.dart';
+import 'package:flutter_hello_world/incoming.dart';
+import 'package:flutter_hello_world/notifications.dart';
+import 'package:flutter_hello_world/outgoing.dart';
 
-class MyClipper extends CustomClipper<Path> {
+void main() {
+  return runApp(LoginPage());
+}
+
+class LoginClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-    Path path;
+    Path path = Path();
+    path.lineTo(0, size.height * 0.5);
+    path.lineTo(size.width * 0.5, size.height);
+    path.lineTo(size.width, size.height * 0.5);
+    path.lineTo(size.width, 0);
+    path.lineTo(0, 0);
     return path;
   }
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) {
     // TODO: implement shouldReclip
-    return false;
+    return true;
   }
-}
-
-class RandomWords extends StatefulWidget {
-  final Color color;
-
-  RandomWords({this.color});
-
-  @override
-  RandomWordsState createState() {
-    return RandomWordsState();
-  }
-}
-
-class RandomWordsState extends State<RandomWords> {
-  @override
-  Widget build(BuildContext context) {
-    final wordPair = WordPair.random();
-    return RaisedButton(
-      color: widget.color,
-      splashColor: Colors.teal,
-      child: Container(
-        child: Align(
-          child: Text(
-            wordPair.asPascalCase,
-            style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w900,
-                color: Colors.black38),
-          ),
-          alignment: Alignment.center,
-        ),
-      ),
-      onPressed: () {
-        setState(() {});
-      },
-    );
-  }
-
-  RandomWordsState();
 }
 
 class Column1 extends StatelessWidget {
-  final Color color;
-
-  Column1({this.color});
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.red,
-      child: Image.asset(
-        'assets/Images/crop.jpg',
-        height: 300,
-        width: 1000,
-        fit: BoxFit.cover,
-        alignment: Alignment.topCenter,
-        colorBlendMode: prefix0.BlendMode.hardLight,
+    return ClipPath(
+      clipBehavior: Clip.antiAlias,
+      clipper: LoginClipper(),
+      child: Container(
+        child: Image.asset(
+          'assets/Images/Abstract-minimalist-wallpaper-HD-desktop-download.png',
+          height: 250,
+          width: 1000,
+          fit: BoxFit.cover,
+          alignment: Alignment.topCenter,
+        ),
       ),
-      alignment: Alignment.topCenter,
     );
   }
 }
 
-class MyApp extends StatefulWidget {
+class UsrChk extends StatefulWidget {
   @override
-  _MyAppState createState() {
-    return _MyAppState();
+  _UsrChkState createState() {
+    return _UsrChkState();
   }
 }
 
-void main() {
-  return runApp(MyApp());
-}
-
-class _MyAppState extends State<MyApp> {
+class _UsrChkState extends State<UsrChk> {
+  final usrName = TextEditingController();
+  final pssWrd = TextEditingController();
+  @override
+  void initState()
+  {
+    super.initState();
+    usrName.addListener((){});
+    pssWrd.addListener((){});
+  }
+  @override
+  void dispose()
+  {
+    usrName.dispose();
+    pssWrd.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
-    //final wordPair = WordPair.random();
-    return MaterialApp(
-      title: 'My App',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Owl App'),
-          backgroundColor: Colors.red,
-        ),
-        body: Column(
-            //    mainAxisAlignment: MainAxisAlignment.center,
-            //   crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Flexible(
-                flex: 2,
-                child: Stack(
-                  children: <Widget>[
-                    Column1(
-                      color: Colors.orange,
-                    ),
-                    Align(
-                      child: FloatingActionButton(
-                        splashColor: Colors.black,
-                        child: Icon(
-                          Icons.settings,
-                          size: 30,
-                        ),
-                        onPressed: () {},
-                      ),
-                      alignment: Alignment(0.85, 0.8),
-                    )
-                  ],
-                ),
-              ),
-              Expanded(
-                child: RandomWords(
-                  color: Colors.orange,
-                ),
-              ),
-              Expanded(
-                child: RandomWords(
-                  color: Colors.deepPurple,
-                ),
-              ),
-              Expanded(
-                child: Stack(children: <Widget>[
-                  Positioned.fill(
-                    child: RandomWords(
-                      color: Colors.green,
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomLeft,
-                    child: FloatingActionButton(
-                        splashColor: Colors.black,
-                        child: Icon(
-                          Icons.ac_unit,
-                          color: Colors.black,
-                          size: 30,
-                        ),
-                        onPressed: () {
-                          setState(() {});
-                        }),
-                  ),
-                ]),
-              )
-            ]),
+    return Container(
+      color: Colors.teal,
+      child: ListView(
+        children: <Widget>[
+          Column1(),
+          Text('Username'),
+          TextField(
+            decoration: InputDecoration(labelText: 'Enter Your Username Here'),
+            controller: usrName,
+          ),
+          Text('Password'),
+          TextField(
+            decoration: InputDecoration(labelText: 'Enter Your Password'),
+            controller: pssWrd,
+          ),
+          RaisedButton(
+            color: Colors.red,
+            onPressed: () {
+              if(usrName.text=='Rishabh Yadav'&&pssWrd.text=='abcd')
+                return Navigator.pushNamed(context, 'accountpage');
+              else
+                return showDialog(context: context,
+                builder: (context){
+                  return AlertDialog(
+                    content: Text('Invalid Username or Password'),
+                  );
+                }
+                );
+            },
+            child: Container(child: Text('Login')),
+          )
+        ],
       ),
+    );
+  }
+}
+
+class LoginScaffold extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Login Page"),
+        backgroundColor: Colors.red,
+      ),
+      body: Stack(
+        children: <Widget>[
+          UsrChk(),
+        ],
+      ),
+    );
+  }
+}
+
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() {
+    return _LoginPageState();
+  }
+}
+
+class _LoginPageState extends State<LoginPage> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      initialRoute: 'loginpage',
+      routes: {
+        'loginpage': (context) {
+          return SafeArea(child: LoginScaffold());
+        },
+        'accountpage': (context) {
+          return SafeArea(child: AccountPage());
+        },
+        'incoming': (context) {
+          return SafeArea(child: Len());
+        },
+        'outgoing': (context) {
+          return SafeArea(child: Den());
+        },
+        'notifications': (context) {
+          return SafeArea(child: Notifications());
+        }
+      },
     );
   }
 }
