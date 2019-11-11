@@ -160,6 +160,12 @@ class AccountPageState extends State<AccountPage> {
             onPressed: () {
               Navigator.pop(context);
             }),
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.power_settings_new, color: Colors
+              .white), onPressed: () async {
+            await FirebaseAuth.instance.signOut();
+          },)
+        ],
       ),
       body: Column(
           //    mainAxisAlignment: MainAxisAlignment.center,
