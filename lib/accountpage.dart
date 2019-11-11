@@ -1,5 +1,6 @@
 import 'dart:ui' as prefix0;
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -136,6 +137,8 @@ class Top extends StatelessWidget {
 }
 
 class AccountPage extends StatefulWidget {
+  AccountPage({Key key, this.user}):super(key:key);
+  FirebaseUser user;
   @override
   AccountPageState createState() {
     return AccountPageState();
@@ -212,7 +215,6 @@ class AccountPageState extends State<AccountPage> {
                         size: 30,
                       ),
                       onPressed: () {
-                        setState(() {});
                       }),
                 ),
               ]),

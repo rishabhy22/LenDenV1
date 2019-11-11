@@ -1,7 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_hello_world/accountpage.dart';
+import 'package:flutter_hello_world/createaccount.dart';
 import 'package:flutter_hello_world/incoming.dart';
 import 'package:flutter_hello_world/notifications.dart';
 import 'package:flutter_hello_world/outgoing.dart';
@@ -56,22 +57,22 @@ class UsrChk extends StatefulWidget {
 }
 
 class _UsrChkState extends State<UsrChk> {
-  final usrName = TextEditingController();
-  final pssWrd = TextEditingController();
+  final email = TextEditingController();
+  final pwd = TextEditingController();
+  final GlobalKey<FormState> usrLoginKey = GlobalKey<FormState>();
+
   @override
-  void initState()
-  {
+  void initState() {
     super.initState();
-    usrName.addListener((){});
-    pssWrd.addListener((){});
   }
-  @override
-  void dispose()
-  {
+
+/*  @override
+  void dispose() {
     usrName.dispose();
     pssWrd.dispose();
     super.dispose();
-  }
+  }*/
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -80,30 +81,66 @@ class _UsrChkState extends State<UsrChk> {
         children: <Widget>[
           Column1(),
           Text('Username'),
-          TextField(
-            decoration: InputDecoration(labelText: 'Enter Your Username Here'),
-            controller: usrName,
+          TextFormField(
+            decoration: InputDecoration(labelText: 'Enter Your Email Here'),
+            controller: email,
+            keyboardType: TextInputType.emailAddress,
           ),
           Text('Password'),
-          TextField(
+          TextFormField(
+            obscureText: true,
             decoration: InputDecoration(labelText: 'Enter Your Password'),
-            controller: pssWrd,
+            controller: pwd,
+            validator: (value) {
+              if (value.length < 8)
+                return 'Password strength must be greater than 8 characters';
+              else
+                return null;
+            },
           ),
           RaisedButton(
             color: Colors.red,
-            onPressed: () {
-              if(usrName.text=='Rishabh Yadav'&&pssWrd.text=='abcd')
-                return Navigator.pushNamed(context, 'accountpage');
-              else
-                return showDialog(context: context,
-                builder: (context){
-                  return AlertDialog(
-                    content: Text('Invalid Username or Password'),
-                  );
-                }
-                );
+            onPressed: () async {
+              if (usrLoginKey.currentState.validate()) {
+                await FirebaseAuth.instance
+                    .signInWithEmailAndPassword(
+                        email: email.text, password: pwd.text)
+                    .then((currentUser) {
+                  return Firestore.instance
+                      .collection("AppUsers")
+                      .document(currentUser.user.uid)
+                      .get()
+                      .then((result) {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) {
+                      return AccountPage(
+                        user: result["fname"],
+                      );
+                    }));
+                  }).catchError((err) {
+                    return print(err);
+                  });
+                }).catchError((err) {
+                  return print(err);
+                });
+              } else {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        content: Text('Invalid Username or Password'),
+                      );
+                    });
+              }
             },
-            child: Container(child: Text('Login')),
+            child: Text('Login'),
+          ),
+          RaisedButton(
+            color: Colors.red,
+            child: Text('New User? Create an Account'),
+            onPressed: () {
+              Navigator.pushNamed(context, 'createaccount');
+            },
           )
         ],
       ),
@@ -128,36 +165,39 @@ class LoginScaffold extends StatelessWidget {
   }
 }
 
-class LoginPage extends StatefulWidget {
-  @override
-  _LoginPageState createState() {
-    return _LoginPageState();
-  }
-}
-
-class _LoginPageState extends State<LoginPage> {
+class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      initialRoute: 'loginpage',
-      routes: {
-        'loginpage': (context) {
-          return SafeArea(child: LoginScaffold());
-        },
-        'accountpage': (context) {
-          return SafeArea(child: AccountPage());
-        },
-        'incoming': (context) {
-          return SafeArea(child: Len());
-        },
-        'outgoing': (context) {
-          return SafeArea(child: Den());
-        },
-        'notifications': (context) {
-          return SafeArea(child: Notifications());
-        }
-      },
-    );
+    return StreamBuilder<FirebaseUser>(
+        stream: FirebaseAuth.instance.onAuthStateChanged,
+        builder: (context, snapshot) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            initialRoute: (snapshot.hasData) ? 'accountpage' : 'loginpage',
+            routes: {
+              'loginpage': (context) {
+                return SafeArea(child: LoginScaffold());
+              },
+              'createaccount': (context) {
+                return SafeArea(child: SignIn());
+              },
+              'accountpage': (context) {
+                return SafeArea(
+                    child: AccountPage(
+                  user: snapshot.data,
+                ));
+              },
+              'incoming': (context) {
+                return SafeArea(child: Len());
+              },
+              'outgoing': (context) {
+                return SafeArea(child: Den());
+              },
+              'notifications': (context) {
+                return SafeArea(child: Notifications());
+              }
+            },
+          );
+        });
   }
 }
