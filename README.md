@@ -1,6 +1,6 @@
-# flutter_hello_world
+# LenDen v1
 
-A new Flutter application
+A new Flutter application for ledger management
 
 ## Getting Started
 
