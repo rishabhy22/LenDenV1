@@ -1,211 +1,252 @@
-import 'package:flutter_hello_world/inter_PageStreams.dart';
-import 'dart:ui' as prefix0;
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_hello_world/authentication.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hello_world/authentication.dart';
-import 'package:flutter_hello_world/loading.dart';
-
-class MyClipper extends CustomClipper<Path> {
-  bool b = false;
-
-  MyClipper({this.b});
-
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    if (b) path.lineTo(0, size.height * 0.5);
-    path.lineTo(size.width * 0.5, size.height);
-    if (b) path.lineTo(size.width, size.height * 0.5);
-    path.lineTo(size.width, 0);
-    path.lineTo(0, 0);
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    // TODO: implement shouldReclip
-    return true;
-  }
-}
-
-class Options extends StatefulWidget {
-  final Color color, secColor;
-  final String s;
-  final int opNo;
-
-  Options({this.color, this.secColor, this.s, this.opNo});
-
-  @override
-  OptionsState createState() {
-    return OptionsState();
-  }
-}
-
-class OptionsState extends State<Options> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: widget.secColor,
-      child: ClipPath(
-        clipBehavior: Clip.antiAlias,
-        clipper: MyClipper(b: false),
-        child: RaisedButton(
-          color: widget.color,
-          splashColor: Colors.teal,
-          child: Container(
-            child: Text(
-              widget.s,
-              style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.black38),
-            ),
-            alignment: Alignment.center,
-          ),
-          onPressed: () {
-            if (widget.opNo == 1) {
-              streamController.add(1);
-            }
-            if (widget.opNo == 2) {
-              streamController.add(2);
-            }
-            if (widget.opNo == 3) {
-              streamController.add(3);
-            }
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class Column1 extends StatelessWidget {
-  final Color color;
-
-  Column1({this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: this.color,
-      child: ClipPath(
-        clipBehavior: Clip.antiAlias,
-        clipper: MyClipper(b: true),
-        child: Image.asset(
-          'assets/Images/pexels-photo-751373.jpeg',
-          height: 300,
-          width: 1000,
-          fit: BoxFit.cover,
-          alignment: Alignment.topCenter,
-          colorBlendMode: prefix0.BlendMode.hardLight,
-        ),
-      ),
-      alignment: Alignment.topCenter,
-    );
-  }
-}
-
-class Top extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        DropdownButton<String>(
-          underline: Container(),
-          icon: CircleAvatar(
-            maxRadius: 30,
-            child: Icon(
-              Icons.settings,
-              size: 30,
-            ),
-          ),
-          items: <String>['Add Friends', 'Settings'].map((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-          onChanged: (selOp) {
-            if (selOp == 'Add Friends') streamController.add(4);
-          },
-        ),
-      ],
-    );
-  }
-}
+import 'package:flutter_hello_world/database.dart';
+import 'package:flutter_hello_world/support.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
 
 class AccountPage extends StatefulWidget {
   @override
   _AccountPage createState() => _AccountPage();
 }
 
-class _AccountPage extends State<AccountPage> {
-  final AuthService auth = AuthService();
-  bool loading = false;
-
+class _AccountPage extends State<AccountPage> with AccountPageDesigns {
   @override
   Widget build(BuildContext context) {
-    return loading
-        ? Loading()
-        : Scaffold(
-            appBar: AppBar(
-              actions: <Widget>[
-                FlatButton.icon(
-                    onPressed: () async {
-                      setState(() {
-                        loading = true;
-                      });
-                      await auth.signOut();
-                    },
-                    icon: Icon(Icons.exit_to_app),
-                    label: Text('Logout'))
-              ],
-              title: Text('Len-Den'),
-              backgroundColor: Color.fromRGBO(230, 65, 64, 1),
-            ),
-            body: Column(
-                //    mainAxisAlignment: MainAxisAlignment.center,
-                //   crossAxisAlignment: CrossAxisAlignment.stretch,
+    final user = Provider.of<User>(context);
+    ScreenUtil.init(context, width: 375, height: 812, allowFontScaling: true);
+    return user != null
+        ? StreamBuilder<Iterable<Query>>(
+            stream: DatabaseService(uid: user.uid).showLenDenRequestAtAcc,
+            builder: (context, snapLD) {
+              List<RecentsModel> recents = List<RecentsModel>();
+              if (snapLD.hasData) {
+                snapLD.data.forEach((coll) {
+                  coll.snapshots().forEach((docs) {
+                    recents.addAll(docs.documents.map((doc) {
+                      return RecentsModel(
+                          toWhomName: doc.data['toWhomName'] ?? '',
+                          toWhomUid: doc.data['toWhomUid'] ?? '',
+                          whoSentUid: doc.data['whoSentUid'] ?? '',
+                          whoSentName: doc.data['whoSentName'] ?? '',
+                          proposedLen: doc.data['len'],
+                          proposedDen: doc.data['den'],
+                          isApproved: doc.data['isApproved']);
+                    }));
+                  });
+                });
+              }
+              return Stack(
                 children: <Widget>[
-                  Flexible(
-                    flex: 2,
-                    child: Stack(
-                      children: <Widget>[
-                        Column1(
-                          color: Colors.orange,
+                  Positioned.fill(
+                      child: Container(
+                    color: Colors.black,
+                  )),
+                  placementWidget(
+                    start: -45,
+                    width: 461,
+                    top: -80,
+                    height: 366,
+                    child: ClipOval(
+                        child: Container(
+                      decoration: BoxDecoration(color: bgColorTop),
+                    )),
+                  ),
+                  placementWidget(start: 12.5,width: 350,top: 50,height: 90,child: Text(
+                    user.fullName != null
+                        ? user.fullName
+                        : 'Welcome to Len-Den!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontFamily: defaultFont,
+                        fontSize: 30,
+                        wordSpacing: 1,
+                        fontWeight: FontWeight.w900),
+                  ),),
+                  placementWidget(
+                    start: 72,
+                    width: 236,
+                    top: 146,
+                    height: 236,
+                    child: ClipOval(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: bgColorBottom,
                         ),
-                        Align(
-                          child: Top(),
-                          alignment: Alignment(0.85, 0.8),
-                        )
-                      ],
+                      ),
                     ),
                   ),
-                  Expanded(
-                    child: Options(
-                      opNo: 1,
-                      color: Colors.orange,
-                      secColor: Colors.pink,
-                      s: 'Friends',
+                  placementWidget(
+                    start: 84.83,
+                    width: 211,
+                    top: 158.89,
+                    height: 211,
+                    child: ClipOval(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
-                  Expanded(
-                    child: Options(
-                      opNo: 2,
-                      s: 'Expenses',
-                      color: Colors.pink,
-                      secColor: Colors.green,
+                  placementWidget(
+                    start: 113,
+                    width: 150,
+                    top: 200,
+                    height: 100,
+                    child: StreamBuilder<UsrDataModel>(
+                        stream: DatabaseService(uid: user.uid).dataOfUsr,
+                        builder: (context, snapshot) {
+                          return snapshot.hasData
+                              ? Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                              child: AutoSizeText('Lent : ',
+                                                  textAlign: TextAlign.start,
+                                                  style: TextStyle(
+                                                      fontFamily: defaultFont,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 13))),
+                                          Expanded(
+                                              child: AutoSizeText('₹'+
+                                                  snapshot.data.netLen.toString(),
+                                                  textAlign: TextAlign.end,
+                                                  style: TextStyle(
+                                                      fontFamily: defaultFont,
+                                                      fontWeight: FontWeight.w300,
+                                                      fontSize: 15))),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: AutoSizeText('Borrowed : ',
+                                                textAlign: TextAlign.start,
+                                                style: TextStyle(
+                                                    fontFamily: defaultFont,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 13)),
+                                          ),
+                                          Expanded(
+                                            child: AutoSizeText('₹'+
+                                                snapshot.data.netDen.toString(),
+                                                textAlign: TextAlign.end,
+                                                style: TextStyle(
+                                                    fontFamily: defaultFont,
+                                                    fontWeight: FontWeight.w300,
+                                                    fontSize: 15)),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : SpinKitChasingDots(
+                                  color: Colors.black,
+                                  size: 50,
+                                );
+                        }),
+                  ),
+                  placementWidget(
+                    start: 34,
+                    top: 390,
+                    height: 15,
+                    width: 304,
+                    child: Text(
+                      'Recent',
+                      style: TextStyle(
+                        color: bgColorTop,
+                        fontFamily: defaultFont,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
-                  Expanded(
-                    child: Options(
-                      opNo: 3,
-                      s: 'Notifications',
-                      color: Colors.green,
-                      secColor: Colors.green,
-                    ),
-                  ),
-                ]),
+                  placementWidget(
+                    start: 34,
+                    width: 304,
+                    top: 411,
+                    height: 193,
+                    child: StreamBuilder<Iterable<Query>>(
+                        stream: DatabaseService(uid: user.uid)
+                            .showLenDenRequestAtAcc,
+                        builder: (context, snapLD) {
+                          return snapLD.hasData
+                              ? (recents.length != 0
+                                  ? ListView.builder(
+                                      addRepaintBoundaries: false,
+                                      itemBuilder: (context, index) {
+                                        var listItem = recents.elementAt(index);
+                                        String whoSent, toWhom;
+                                        int amt;
+                                        if (listItem.whoSentUid == user.uid) {
+                                          whoSent = 'You';
+                                          toWhom = listItem.toWhomName;
+                                        } else {
+                                          whoSent = listItem.whoSentName;
+                                          toWhom = 'You';
+                                        }
+                                        if (listItem.proposedDen != null)
+                                          amt = listItem.proposedDen;
+                                        else
+                                          amt = listItem.proposedLen;
+                                        return Padding(
+                                          padding: EdgeInsets.all(2.0),
+                                          child: Card(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          22)),
+                                              color: bgColorTop,
+                                              child: ListTile(
+                                                dense: true,
+                                                title: listItem.proposedLen!=null?Text(
+                                                  '$whoSent requested ₹$amt Len from $toWhom',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      color: bgColorBottom,
+                                                      fontFamily: defaultFont),
+                                                ):Text(
+                                                  '$whoSent requested ₹$amt Den to $toWhom',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      color: bgColorBottom,
+                                                      fontFamily: defaultFont),
+                                                ),
+                                                trailing: listItem.isApproved
+                                                    ? Icon(Icons.check_box)
+                                                    : Icon(Icons
+                                                        .check_box_outline_blank),
+                                              )),
+                                        );
+                                      },
+                                      itemCount: recents.length)
+                                  : Image.asset(
+                                      'assets/Images/download2.jpg',
+                                      alignment: Alignment.center,
+                                    ))
+                              : SpinKitChasingDots(
+                                  color: bgColorTop,
+                                  size: 50,
+                                );
+                        }),
+                  )
+                ],
+              );
+            })
+        : SpinKitChasingDots(
+            color: Colors.white,
+            size: 50,
           );
   }
 }

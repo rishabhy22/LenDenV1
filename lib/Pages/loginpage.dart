@@ -2,6 +2,8 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter_hello_world/authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/loading.dart';
+import 'package:flutter_hello_world/support.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LoginClipper extends CustomClipper<Path> {
   @override
@@ -52,7 +54,7 @@ class LoginPage extends StatefulWidget {
   }
 }
 
-class _LoginPage extends State<LoginPage> {
+class _LoginPage extends State<LoginPage> with LoginPageDesigns {
   String email, pwd, errorMsg;
   final usrLoginKey = GlobalKey<FormState>();
   final AuthService auth = AuthService();
@@ -60,133 +62,185 @@ class _LoginPage extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 375, height: 812, allowFontScaling: true);
     return loading
-        ? Loading()
+        ? Loading(
+            loadingColor: bgColorTop,
+          )
         : Scaffold(
-            resizeToAvoidBottomPadding: false,
+            resizeToAvoidBottomInset: false,
             appBar: AppBar(
-              title: Text("Login Page"),
-              backgroundColor: Colors.red,
+              title: Text(
+                "Login Page",
+                style: TextStyle(
+                    fontWeight: FontWeight.w900, fontFamily: defaultFont),
+              ),
+              backgroundColor: Colors.black,
             ),
             body: Stack(
               children: <Widget>[
-                Container(
-                  // constraints: ,
-                  color: Colors.teal,
+                Positioned.fill(
+                    child: Container(
+                  color: bgColorBottom,
+                )),
+                placementWidget(
+                  width: 341,
+                  height: 126,
+                  start: 17,
+                  top: 270,
                   child: Form(
                     key: usrLoginKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    child: Stack(
                       children: <Widget>[
-                        TextFormField(
-                          cursorColor: Colors.white,
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                          decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(40.0),
-                                  borderSide: BorderSide(
-                                      color: Colors.white, width: 4)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                  borderSide: BorderSide(
-                                      color: Colors.black, width: 4)),
-                              hintText: 'Email'),
-                          onChanged: (input) {
-                            setState(() {
-                              email = input;
-                            });
-                          },
-                          obscureText: false,
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        TextFormField(
-                          cursorColor: Colors.white,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.white),
-                          decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(40.0),
-                                  borderSide: BorderSide(
-                                      color: Colors.white, width: 4)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                  borderSide: BorderSide(
-                                      color: Colors.black, width: 4)),
-                              hintText: 'Password'),
-                          onChanged: (input) {
-                            setState(() {
-                              pwd = input;
-                            });
-                          },
-                          obscureText: true,
-                          validator: (value) {
-                            if (value.length < 8)
-                              return 'Password strength must be greater than 8 characters';
-                            else
-                              return null;
-                          },
-                        ),
-                        SizedBox(
-                          height: 14,
-                        ),
-                        RaisedButton(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0)),
-                          child: Text(
-                            'LOGIN',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
+                        placementWidget(
+                          width: 341,
+                          height: 55,
+                          start: 0,
+                          top: 0,
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(37),
+                                color: bgColorTop),
+                            child: TextFormField(
+                                textAlign: TextAlign.center,
+                                cursorColor: bgColorBottom,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: bgColorBottom,
+                                    fontFamily: defaultFont),
+                                decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: 'Email'),
+                                onChanged: (input) {
+                                  setState(() {
+                                    email = input;
+                                  });
+                                }),
                           ),
-                          onPressed: () async {
-                            if (EmailValidator.validate(email)) {
-                              if (usrLoginKey.currentState.validate()) {
-                                setState(() {
-                                  loading = true;
-                                });
-                              }
-                              dynamic result = await auth
-                                  .signInWithEmailAndPassword(email, pwd);
-                              if (result == null) {
-                                setState(() {
-                                  loading = false;
-                                  errorMsg = 'Login failed! No such User';
-                                });
-                              }
-                            }
-                            else
-                            {
-                              errorMsg='Invalid Email';
-                              showDialog(context: context,builder: (BuildContext context){
-                                return AlertDialog(content: Text(errorMsg));
-                              });
-                            }
-
-                          },
                         ),
-                        RaisedButton(
-                          splashColor: Colors.green,
-                          color: Colors.lightGreen,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0)),
-                          child: Text(
-                            "New User ? Register Here",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                fontSize: 20),
+                        placementWidget(
+                          width: 341,
+                          height: 55,
+                          start: 0,
+                          top: 71,
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(37),
+                                color: bgColorTop),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: TextFormField(
+                                textAlign: TextAlign.center,
+                                cursorColor: bgColorBottom,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: bgColorBottom),
+                                decoration: InputDecoration(
+                                    errorStyle:
+                                        TextStyle(fontFamily: defaultFont),
+                                    border: InputBorder.none,
+                                    hintText: 'Password'),
+                                onChanged: (input) {
+                                  setState(() {
+                                    pwd = input;
+                                  });
+                                },
+                                obscureText: true,
+                                validator: (value) {
+                                  if (value.length < 8)
+                                    return 'Password strength must be greater than 8 characters';
+                                  else
+                                    return null;
+                                },
+                              ),
+                            ),
                           ),
-                          onPressed: () {
-                            widget.toggle();
-                          },
-                        )
+                        ),
                       ],
                     ),
                   ),
                 ),
-                Column1(),
+                placementWidget(
+                  height: 34,
+                  width: 149,
+                  start: 113,
+                  top: 416,
+                  child: RaisedButton(
+                    color: bgColorTop,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0)),
+                    child: Text(
+                      'LOGIN',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 20,
+                          fontFamily: defaultFont),
+                    ),
+                    onPressed: () async {
+                      if (email != null && EmailValidator.validate(email)) {
+                        dynamic result;
+                        if (usrLoginKey.currentState.validate()) {
+                          setState(() {
+                            loading = true;
+                          });
+                          result =
+                              await auth.signInWithEmailAndPassword(email, pwd);
+                        }
+
+                        if (result == null) {
+                          setState(() {
+                            loading = false;
+                            errorMsg = 'Login failed! No such User';
+                          });
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(content: Text(errorMsg));
+                              });
+                        }
+                      } else {
+                        errorMsg = 'Invalid Email';
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(content: Text(errorMsg));
+                            });
+                      }
+                    },
+                  ),
+                ),
+                placementWidget(
+                  height: 34,
+                  width: 149,
+                  start: 113,
+                  top: 510,
+                  child: RaisedButton(
+                    splashColor: bgColorBottom,
+                    color: Color.fromRGBO(234, 22, 70, 1),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0)),
+                    child: Text(
+                      "New User ? Register Here",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: defaultFont,
+                          fontWeight: FontWeight.w900,
+                          color: bgColorTop,
+                          fontSize: 14),
+                    ),
+                    onPressed: () {
+                      widget.toggle();
+                    },
+                  ),
+                ),
+                placementWidget(
+                    width: 376,
+                    height: 260,
+                    top: 0,
+                    start: 0,
+                    child: Column1()),
               ],
             ),
           );

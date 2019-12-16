@@ -15,6 +15,33 @@ class AuthService {
     return auth.onAuthStateChanged.map(userDet);
   }
 
+  Future verifyUser(String currPwd)
+  async{
+    try{
+      var credentials=EmailAuthProvider.getCredential(password: currPwd);
+      FirebaseUser user=await auth.currentUser();
+      return user.reauthenticateWithCredential(credentials);
+    }
+    catch(error)
+    {
+      print(error.toString());
+      return false;
+    }
+  }
+
+  Future changePassword(String pwd)
+  async{
+    try{
+      FirebaseUser user=await auth.currentUser();
+
+      return user.updatePassword(pwd);
+    }
+    catch(error){
+      print(error.toString());
+      return false;
+    }
+  }
+
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
       AuthResult result = await auth.signInWithEmailAndPassword(
@@ -31,15 +58,15 @@ class AuthService {
   Future registerWithEmailAndPassword(String firstName, String lastName,
       String email, String password, String usrName) async {
     try {
+      final usrUpdateInfo = UserUpdateInfo();
+      usrUpdateInfo.displayName = firstName + ' ' + lastName;
       AuthResult result = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
       FirebaseUser user = result.user;
-      final usrUpdateInfo = UserUpdateInfo();
-      usrUpdateInfo.displayName = firstName + ' ' + lastName;
       await user.updateProfile(usrUpdateInfo);
-      await user.reload();
       await DatabaseService(uid: user.uid)
           .createUsrData(firstName, lastName, email, usrName);
+      await user.reload();
       return userDet(user);
     } catch (error) {
       print(error.toString());

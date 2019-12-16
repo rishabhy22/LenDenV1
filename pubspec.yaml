@@ -25,6 +25,10 @@ dependencies:
   provider: 4.0.2
   flutter_spinkit: 4.1.1
   email_validator: 1.0.4
+  curved_navigation_bar: ^0.3.2
+  flutter_screenutil: 1.0.2
+  flutter_launcher_icons: ^0.7.4
+  auto_size_text: ^2.1.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -33,6 +37,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon/app_icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -61,10 +69,11 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+
+  fonts:
+     - family: Ubuntu
+       fonts:
+         - asset: assets/fonts/Ubuntu/Ubuntu-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
