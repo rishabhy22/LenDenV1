@@ -56,17 +56,23 @@ class _AccountPage extends State<AccountPage> with AccountPageDesigns {
                       decoration: BoxDecoration(color: bgColorTop),
                     )),
                   ),
-                  placementWidget(start: 12.5,width: 350,top: 50,height: 90,child: Text(
-                    user.fullName != null
-                        ? user.fullName
-                        : 'Welcome to Len-Den!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontFamily: defaultFont,
-                        fontSize: 30,
-                        wordSpacing: 1,
-                        fontWeight: FontWeight.w900),
-                  ),),
+                  placementWidget(
+                    start: 12.5,
+                    width: 350,
+                    top: 50,
+                    height: 90,
+                    child: Text(
+                      user.fullName != null
+                          ? user.fullName
+                          : 'Welcome to Len-Den!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: defaultFont,
+                          fontSize: 30,
+                          wordSpacing: 1,
+                          fontWeight: FontWeight.w900),
+                    ),
+                  ),
                   placementWidget(
                     start: 72,
                     width: 236,
@@ -114,15 +120,19 @@ class _AccountPage extends State<AccountPage> with AccountPageDesigns {
                                                   textAlign: TextAlign.start,
                                                   style: TextStyle(
                                                       fontFamily: defaultFont,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       fontSize: 13))),
                                           Expanded(
-                                              child: AutoSizeText('₹'+
-                                                  snapshot.data.netLen.toString(),
+                                              child: AutoSizeText(
+                                                  '₹' +
+                                                      snapshot.data.netLen
+                                                          .toString(),
                                                   textAlign: TextAlign.end,
                                                   style: TextStyle(
                                                       fontFamily: defaultFont,
-                                                      fontWeight: FontWeight.w300,
+                                                      fontWeight:
+                                                          FontWeight.w300,
                                                       fontSize: 15))),
                                         ],
                                       ),
@@ -139,8 +149,10 @@ class _AccountPage extends State<AccountPage> with AccountPageDesigns {
                                                     fontSize: 13)),
                                           ),
                                           Expanded(
-                                            child: AutoSizeText('₹'+
-                                                snapshot.data.netDen.toString(),
+                                            child: AutoSizeText(
+                                                '₹' +
+                                                    snapshot.data.netDen
+                                                        .toString(),
                                                 textAlign: TextAlign.end,
                                                 style: TextStyle(
                                                     fontFamily: defaultFont,
@@ -210,19 +222,28 @@ class _AccountPage extends State<AccountPage> with AccountPageDesigns {
                                               color: bgColorTop,
                                               child: ListTile(
                                                 dense: true,
-                                                title: listItem.proposedLen!=null?Text(
-                                                  '$whoSent requested ₹$amt Len from $toWhom',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      color: bgColorBottom,
-                                                      fontFamily: defaultFont),
-                                                ):Text(
-                                                  '$whoSent requested ₹$amt Den to $toWhom',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      color: bgColorBottom,
-                                                      fontFamily: defaultFont),
-                                                ),
+                                                title: listItem.proposedLen !=
+                                                        null
+                                                    ? Text(
+                                                        '$whoSent requested ₹$amt Len from $toWhom',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            color:
+                                                                bgColorBottom,
+                                                            fontFamily:
+                                                                defaultFont),
+                                                      )
+                                                    : Text(
+                                                        '$whoSent requested ₹$amt Den to $toWhom',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            color:
+                                                                bgColorBottom,
+                                                            fontFamily:
+                                                                defaultFont),
+                                                      ),
                                                 trailing: listItem.isApproved
                                                     ? Icon(Icons.check_box)
                                                     : Icon(Icons
