@@ -1,10 +1,9 @@
 import 'dart:ui' as prefix0;
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hello_world/authentication.dart';
+import 'package:flutter_hello_world/loading.dart';
 
-//import 'package:provider/provider.dart';
 
 class MyClipper extends CustomClipper<Path> {
   bool b = false;
@@ -135,31 +134,33 @@ class Top extends StatelessWidget {
     );
   }
 }
-
 class AccountPage extends StatefulWidget {
-  AccountPage({Key key, this.user}):super(key:key);
-  FirebaseUser user;
   @override
-  AccountPageState createState() {
-    return AccountPageState();
-  }
+  _AccountPage createState() => _AccountPage();
 }
 
-class AccountPageState extends State<AccountPage> {
+
+
+class _AccountPage extends State<AccountPage> {
+  final AuthService auth=AuthService();
+  bool loading=false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading?Loading():Scaffold(
       appBar: AppBar(
-        title: Text('Owl App'),
+        actions: <Widget>[
+          FlatButton.icon(
+              onPressed: ()async {
+                setState(() {
+                  loading=true;
+                });
+                await auth.signOut();
+              },
+              icon: Icon(Icons.exit_to_app),
+              label: Text('Logout'))
+        ],
+        title: Text('Len-Den'),
         backgroundColor: Color.fromRGBO(230, 65, 64, 1),
-        leading: IconButton(
-            icon: Icon(
-              Icons.chevron_left,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            }),
       ),
       body: Column(
           //    mainAxisAlignment: MainAxisAlignment.center,
@@ -183,16 +184,8 @@ class AccountPageState extends State<AccountPage> {
               child: Options(
                 opNo: 1,
                 color: Colors.orange,
-                secColor: Colors.deepPurple,
-                s: 'Len',
-              ),
-            ),
-            Expanded(
-              child: Options(
-                opNo: 2,
-                s: 'Den',
-                color: Colors.deepPurple,
                 secColor: Colors.green,
+                s: 'Friends',
               ),
             ),
             Expanded(
@@ -214,8 +207,7 @@ class AccountPageState extends State<AccountPage> {
                         color: Colors.black,
                         size: 30,
                       ),
-                      onPressed: () {
-                      }),
+                      onPressed: () {}),
                 ),
               ]),
             )

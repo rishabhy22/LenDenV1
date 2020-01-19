@@ -36,6 +36,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.14.11"
+  dynamic_widget:
+    dependency: "direct main"
+    description:
+      name: dynamic_widget
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.3"
+  email_validator:
+    dependency: "direct main"
+    description:
+      name: email_validator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.4"
   firebase_auth:
     dependency: "direct main"
     description:
@@ -55,11 +69,25 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_spinkit:
+    dependency: "direct main"
+    description:
+      name: flutter_spinkit
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.1.1+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
     source: sdk
     version: "0.0.0"
+  logging:
+    dependency: transitive
+    description:
+      name: logging
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.11.3+2"
   matcher:
     dependency: transitive
     description:
@@ -88,6 +116,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.0+1"
+  provider:
+    dependency: "direct main"
+    description:
+      name: provider
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.2.0"
   quiver:
     dependency: transitive
     description:
@@ -157,5 +192,5 @@ packages:
     source: hosted
     version: "2.0.8"
 sdks:
-  dart: ">=2.2.2 <3.0.0"
+  dart: ">=2.5.0 <3.0.0"
   flutter: ">=1.9.1+hotfix.5 <2.0.0"
