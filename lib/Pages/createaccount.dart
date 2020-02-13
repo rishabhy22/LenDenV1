@@ -215,10 +215,11 @@ class _RegDet extends State<RegDet> {
                           else
                             {
                               errorMsg='Invalid Email';
+                              showDialog(context: context,builder: (BuildContext context){
+                                return AlertDialog(content: Text(errorMsg));
+                              });
                             }
-                          showDialog(context: context,builder: (BuildContext context){
-                            return AlertDialog(content: Text(errorMsg));
-                          });
+
                         },
                       ),
                       Text("Already have an account?",style: TextStyle(fontWeight: FontWeight.w900),textAlign: TextAlign.center,),

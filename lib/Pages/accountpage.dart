@@ -1,9 +1,9 @@
+import 'package:flutter_hello_world/inter_PageStreams.dart';
 import 'dart:ui' as prefix0;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hello_world/authentication.dart';
 import 'package:flutter_hello_world/loading.dart';
-
 
 class MyClipper extends CustomClipper<Path> {
   bool b = false;
@@ -63,18 +63,15 @@ class OptionsState extends State<Options> {
             alignment: Alignment.center,
           ),
           onPressed: () {
-            if (widget.opNo == 1)
-              Navigator.pushNamed(
-                context,
-                'incoming',
-              );
-            if (widget.opNo == 2)
-              Navigator.pushNamed(
-                context,
-                'outgoing',
-              );
-            if (widget.opNo == 3) Navigator.pushNamed(context, 'notifications');
-            setState(() {});
+            if (widget.opNo == 1) {
+              streamController.add(1);
+            }
+            if (widget.opNo == 2) {
+              streamController.add(2);
+            }
+            if (widget.opNo == 3) {
+              streamController.add(3);
+            }
           },
         ),
       ),
@@ -128,90 +125,87 @@ class Top extends StatelessWidget {
               child: Text(value),
             );
           }).toList(),
-          onChanged: (_) {},
+          onChanged: (selOp) {
+            if (selOp == 'Add Friends') streamController.add(4);
+          },
         ),
       ],
     );
   }
 }
+
 class AccountPage extends StatefulWidget {
   @override
   _AccountPage createState() => _AccountPage();
 }
 
-
-
 class _AccountPage extends State<AccountPage> {
-  final AuthService auth=AuthService();
-  bool loading=false;
+  final AuthService auth = AuthService();
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
-    return loading?Loading():Scaffold(
-      appBar: AppBar(
-        actions: <Widget>[
-          FlatButton.icon(
-              onPressed: ()async {
-                setState(() {
-                  loading=true;
-                });
-                await auth.signOut();
-              },
-              icon: Icon(Icons.exit_to_app),
-              label: Text('Logout'))
-        ],
-        title: Text('Len-Den'),
-        backgroundColor: Color.fromRGBO(230, 65, 64, 1),
-      ),
-      body: Column(
-          //    mainAxisAlignment: MainAxisAlignment.center,
-          //   crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Flexible(
-              flex: 2,
-              child: Stack(
+    return loading
+        ? Loading()
+        : Scaffold(
+            appBar: AppBar(
+              actions: <Widget>[
+                FlatButton.icon(
+                    onPressed: () async {
+                      setState(() {
+                        loading = true;
+                      });
+                      await auth.signOut();
+                    },
+                    icon: Icon(Icons.exit_to_app),
+                    label: Text('Logout'))
+              ],
+              title: Text('Len-Den'),
+              backgroundColor: Color.fromRGBO(230, 65, 64, 1),
+            ),
+            body: Column(
+                //    mainAxisAlignment: MainAxisAlignment.center,
+                //   crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  Column1(
-                    color: Colors.orange,
+                  Flexible(
+                    flex: 2,
+                    child: Stack(
+                      children: <Widget>[
+                        Column1(
+                          color: Colors.orange,
+                        ),
+                        Align(
+                          child: Top(),
+                          alignment: Alignment(0.85, 0.8),
+                        )
+                      ],
+                    ),
                   ),
-                  Align(
-                    child: Top(),
-                    alignment: Alignment(0.85, 0.8),
-                  )
-                ],
-              ),
-            ),
-            Expanded(
-              child: Options(
-                opNo: 1,
-                color: Colors.orange,
-                secColor: Colors.green,
-                s: 'Friends',
-              ),
-            ),
-            Expanded(
-              child: Stack(children: <Widget>[
-                Positioned.fill(
-                  child: Options(
-                    opNo: 3,
-                    s: 'Notifications',
-                    color: Colors.green,
-                    secColor: Colors.green,
+                  Expanded(
+                    child: Options(
+                      opNo: 1,
+                      color: Colors.orange,
+                      secColor: Colors.pink,
+                      s: 'Friends',
+                    ),
                   ),
-                ),
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: FloatingActionButton(
-                      splashColor: Colors.black,
-                      child: Icon(
-                        Icons.ac_unit,
-                        color: Colors.black,
-                        size: 30,
-                      ),
-                      onPressed: () {}),
-                ),
-              ]),
-            )
-          ]),
-    );
+                  Expanded(
+                    child: Options(
+                      opNo: 2,
+                      s: 'Expenses',
+                      color: Colors.pink,
+                      secColor: Colors.green,
+                    ),
+                  ),
+                  Expanded(
+                    child: Options(
+                      opNo: 3,
+                      s: 'Notifications',
+                      color: Colors.green,
+                      secColor: Colors.green,
+                    ),
+                  ),
+                ]),
+          );
   }
 }
